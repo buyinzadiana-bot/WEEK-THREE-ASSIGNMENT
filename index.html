@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Task Management Dashboard • Standout</title>
+
+    <!-- Tailwind config for class-based dark mode -->
+    <script>
+      window.tailwind = { config: { darkMode: "class" } };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* Custom animations and styling */
+      .fade-in {
+        animation: fadeIn 0.28s ease both;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .task-completed {
+        text-decoration: line-through;
+        opacity: 0.7;
+      }
+      .focus-ring:focus {
+        outline: 3px solid rgba(99, 102, 241, 0.25);
+        outline-offset: 3px;
+      }
+    </style>
+  </head>
+  <body class="font-inter bg-black text-white min-h-screen">
+    <!-- HEADER -->
+    <header
+      class="sticky top-0 z-30 bg-black/90 backdrop-blur-md border-b border-gray-700"
+    >
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <!-- LOGO LEFT -->
+                <svg
+        class="w-8 h-8 text-indigo-500"
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M3 12l4-4 7 7 7-7 3 3"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+      <h1 class="text-lg font-bold leading-tight">Task Dashboard</h1>
+    </div>
+
+
+
+          <!-- NAV RIGHT -->
+          <nav class="flex items-center gap-6 text-sm">
+            <a href="#add" class="hover:text-indigo-400">Add Task</a>
+            <a href="#list" class="hover:text-indigo-400">Tasks</a>
+            <a href="#about" class="hover:text-indigo-400">About</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    
+<!-- ===== MAIN LAYOUT (REPLACE YOUR CURRENT <main> BLOCK WITH THIS) ===== -->
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+  <!-- HERO / INSTRUCTIONS
+       Layout behaviour:
+        - mobile: single column stack (grid-cols-1)
+        - md+: grid with 3 columns where hero takes 2 cols and stats takes 1 col
+        - gaps and padding scale with screen size
+  -->
+  <section class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+    <!-- HERO (spans two columns on md+) -->
+   
+    <!-- QUICK STATS (right column on md+, stacked under hero on mobile) -->
+    <aside class="bg-gray-900 rounded-2xl p-4 sm:p-6 shadow-lg flex flex-col justify-between">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-xs text-gray-400">Tasks</div>
+          <div id="statsTotal" class="text-lg sm:text-xl font-bold">0</div>
+        </div>
+        <div class="text-right">
+          <div class="text-xs text-gray-400">Completed</div>
+          <div id="statsDone" class="text-lg sm:text-xl font-bold text-green-500">0</div>
+        </div>
+      </div>
+
+      <!-- small controls -->
+      <div class="mt-4 grid gap-3">
+        <button id="clearStorageBtn" class="w-full px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm">
+          Clear Storage
+        </button>
+
+        <!-- optional small quick links or summary -->
+        <div class="text-xs text-gray-400">
+          <div>• Inline edit - click a task title</div>
+          <div>• Click a task's ✓ to toggle complete</div>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+
+     <!-- ADD TASK FORM -->
+<section id="add" class="bg-gray-900 rounded-2xl p-6 shadow grid gap-4">
+  <h3 class="text-lg font-semibold">Add New Task</h3>
+
+  <form id="taskForm" class="grid gap-3 grid-cols-1 sm:grid-cols-3">
+    <!-- Task Name -->
+    <label class="sm:col-span-2">
+      <span class="text-sm font-medium">Task Name</span>
+      <input
+        id="taskName"
+        type="text"
+        placeholder="e.g., Finish report"
+        required
+        class="mt-1 w-full p-3 border rounded text-black focus-ring"
+      />
+    </label>
+
+    <!-- Due Date -->
+    <label>
+      <span class="text-sm font-medium">Due Date</span>
+      <input
+        id="taskDue"
+        type="date"
+        class="mt-1 w-full p-3 border rounded text-black focus-ring"
+      />
+    </label>
+
+    <!-- Priority, Category & Button -->
+    <div class="sm:col-span-3 flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+      <select
+        id="taskPriority"
+        class="w-full sm:w-40 p-3 border rounded focus-ring text-black"
+      >
+        <option value="Low">🌱 Low</option>
+        <option value="Medium">⚡ Medium</option>
+        <option value="High">🔥 High</option>
+      </select>
+
+      <select
+        id="taskCategory"
+        class="w-full sm:w-40 p-3 border rounded focus-ring text-black"
+      >
+        <option>General</option>
+        <option>Work</option>
+        <option>Personal</option>
+        <option>School</option>
+      </select>
+
+      <button
+        type="submit"
+        id="addBtn"
+        class="w-full sm:w-auto ml-auto px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600 focus-ring"
+      >
+        Add Task
+      </button>
+    </div>
+
+    <!-- Filters -->
+    <div
+      class="sm:col-span-3 flex flex-wrap gap-2 items-center mt-1"
+    >
+      <!-- Filter -->
+      <div class="flex gap-2 items-center">
+        <label class="text-sm">Filter:</label>
+        <select
+          id="filterStatus"
+          class="p-2 border rounded text-black focus-ring"
+        >
+          <option value="All">All</option>
+          <option value="Pending">Pending</option>
+          <option value="Completed">Completed</option>
+        </select>
+      </div>
+
+      <!-- Sort -->
+      <div class="flex gap-2 items-center">
+        <label class="text-sm">Sort by due:</label>
+        <select
+          id="sortDue"
+          class="p-2 border rounded text-black focus-ring"
+        >
+          <option value="none">None</option>
+          <option value="asc">Earliest first</option>
+          <option value="desc">Latest first</option>
+        </select>
+      </div>
+
+      <!-- Search -->
+      <div class="flex gap-2 items-center ml-auto w-full sm:w-auto">
+        <input
+          id="searchInput"
+          placeholder="Search tasks..."
+          class="flex-1 p-2 border rounded text-black focus-ring"
+        />
+        <button id="resetFilters" class="px-3 py-2 bg-gray-600 rounded text-white w-full sm:w-auto">
+          Reset
+        </button>
+      </div>
+    </div>
+  </form>
+</section>
+
+      <!-- TASK LIST -->
+      <section id="list" class="space-y-4">
+        <h3 class="text-lg font-semibold">Task List</h3>
+        <ul id="taskList" class="grid gap-3"></ul>
+      </section>
+
+      <!-- ABOUT -->
+      <section id="about" class="bg-gray-900 rounded-2xl p-6 shadow">
+        <h3 class="text-lg font-semibold">About this dashboard</h3>
+        <p class="mt-2 text-sm text-gray-400">
+          Fully responsive dashboard built with Tailwind and vanilla JS. Add,
+          edit, filter, sort, complete tasks. Data persists in LocalStorage.
+        </p>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="py-8 text-center text-sm text-gray-500">
+      Built for learning • Tailwind • Vanilla JS • LocalStorage
+    </footer>
+
+    <!-- TASK LOGIC JS -->
+    <script>
+      const STORAGE_KEY = "task_dashboard_v2";
+      const taskListEl = document.getElementById("taskList");
+      const taskForm = document.getElementById("taskForm");
+      const taskNameInput = document.getElementById("taskName");
+      const taskDueInput = document.getElementById("taskDue");
+      const taskPriorityInput = document.getElementById("taskPriority");
+      const taskCategoryInput = document.getElementById("taskCategory");
+      const filterStatus = document.getElementById("filterStatus");
+      const sortDue = document.getElementById("sortDue");
+      const searchInput = document.getElementById("searchInput");
+      const resetFilters = document.getElementById("resetFilters");
+      const statsTotal = document.getElementById("statsTotal");
+      const statsDone = document.getElementById("statsDone");
+      const clearStorageBtn = document.getElementById("clearStorageBtn");
+
+      // ID generator
+      function uid() {
+        return "t-" + Math.random().toString(36).slice(2, 9);
+      }
+      function addDaysISO(days) {
+        const d = new Date();
+        d.setDate(d.getDate() + days);
+        return d.toISOString().slice(0, 10);
+      }
+
+      // Sample tasks
+      const sampleTasks = [
+        {
+          id: uid(),
+          title: "Design home hero",
+          due: addDaysISO(3),
+          priority: "High",
+          category: "Work",
+          completed: false,
+          createdAt: Date.now() - 86400000,
+        },
+        {
+          id: uid(),
+          title: "Write README",
+          due: addDaysISO(5),
+          priority: "Medium",
+          category: "Work",
+          completed: false,
+          createdAt: Date.now() - 82800000,
+        },
+        {
+          id: uid(),
+          title: "Finish JS module",
+          due: addDaysISO(1),
+          priority: "High",
+          category: "School",
+          completed: false,
+          createdAt: Date.now() - 79200000,
+        },
+        {
+          id: uid(),
+          title: "Buy hosting",
+          due: "",
+          priority: "Low",
+          category: "Personal",
+          completed: false,
+          createdAt: Date.now() - 75600000,
+        },
+        {
+          id: uid(),
+          title: "Refactor code",
+          due: addDaysISO(7),
+          priority: "Medium",
+          category: "Work",
+          completed: true,
+          createdAt: Date.now() - 72000000,
+        },
+      ];
+
+      let tasks =
+        JSON.parse(localStorage.getItem(STORAGE_KEY)) || sampleTasks.slice();
+
+      function saveTasks() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+        renderTasks();
+      }
+      function addTask(e) {
+        e.preventDefault();
+        const title = taskNameInput.value.trim();
+        if (!title) {
+          alert("Task name required");
+          return;
+        }
+        tasks.push({
+          id: uid(),
+          title,
+          due: taskDueInput.value || "",
+          priority: taskPriorityInput.value,
+          category: taskCategoryInput.value,
+          completed: false,
+          createdAt: Date.now(),
+        });
+        taskForm.reset();
+        saveTasks();
+      }
+      function deleteTask(id) {
+        if (confirm("Delete this task?")) {
+          tasks = tasks.filter((t) => t.id !== id);
+          saveTasks();
+        }
+      }
+      function toggleComplete(id) {
+        const t = tasks.find((x) => x.id === id);
+        if (t) {
+          t.completed = !t.completed;
+          saveTasks();
+        }
+      }
+      function updateTask(id, patch) {
+        const t = tasks.find((x) => x.id === id);
+        if (t) {
+          Object.assign(t, patch);
+          saveTasks();
+        }
+      }
+
+      function renderTasks() {
+        const query = (searchInput.value || "").trim().toLowerCase();
+        const status = filterStatus.value;
+        const sortMode = sortDue.value;
+
+        let visible = tasks.filter((t) => {
+          if (status === "Pending" && t.completed) return false;
+          if (status === "Completed" && !t.completed) return false;
+          if (
+            query &&
+            !t.title.toLowerCase().includes(query) &&
+            !(t.category || "").toLowerCase().includes(query)
+          )
+            return false;
+          return true;
+        });
+
+        if (sortMode === "asc") {
+          visible.sort(
+            (a, b) => (a.due || "9999-12-31") > (b.due || "9999-12-31" ? 1 : -1)
+          );
+        } else if (sortMode === "desc") {
+          visible.sort((a, b) => (a.due || "") < (b.due || "" ? 1 : -1));
+        } else visible.sort((a, b) => b.createdAt - a.createdAt);
+
+        statsTotal.textContent = tasks.length;
+        statsDone.textContent = tasks.filter((t) => t.completed).length;
+
+        if (visible.length === 0) {
+          taskListEl.innerHTML = `<li class="p-4 bg-gray-800 rounded text-sm text-gray-400">No tasks found.</li>`;
+          return;
+        }
+
+        taskListEl.innerHTML = "";
+        visible.forEach((t) => {
+          const li = document.createElement("li");
+          li.className =
+            "p-4 bg-gray-800 rounded-lg shadow-sm flex flex-col sm:flex-row sm:items-center gap-3";
+          li.dataset.id = t.id;
+
+          const left = document.createElement("div");
+          left.className = "flex-1 min-w-0";
+          const badges = document.createElement("div");
+          badges.className = "flex flex-wrap gap-2 mb-2 items-center";
+
+          const priBadge = document.createElement("span");
+          priBadge.className =
+            "text-xs px-2 py-0.5 rounded " +
+            (t.priority === "High"
+              ? "bg-red-700 text-red-100"
+              : t.priority === "Medium"
+              ? "bg-yellow-700 text-yellow-100"
+              : "bg-green-700 text-green-100");
+          priBadge.textContent = t.priority;
+          badges.appendChild(priBadge);
+
+          const catBadge = document.createElement("span");
+          catBadge.className =
+            "text-xs px-2 py-0.5 rounded bg-gray-700 text-gray-200";
+          catBadge.textContent = t.category || "General";
+          badges.appendChild(catBadge);
+
+          const title = document.createElement("div");
+          title.className = "text-sm font-medium truncate";
+          if (t.completed) title.classList.add("task-completed");
+          title.contentEditable = true;
+          title.spellcheck = false;
+          title.textContent = t.title;
+          title.addEventListener("blur", () => {
+            const newText = title.textContent.trim();
+            if (!newText) {
+              title.textContent = t.title;
+              return;
+            }
+            if (newText !== t.title) updateTask(t.id, { title: newText });
+          });
+          title.addEventListener("keydown", (ev) => {
+            if (ev.key === "Enter") {
+              ev.preventDefault();
+              title.blur();
+            }
+          });
+
+          const meta = document.createElement("div");
+          meta.className = "text-xs text-gray-400 mt-1";
+          meta.innerHTML = `Due: ${
+            t.due
+              ? `<time datetime="${t.due}">${t.due}</time>`
+              : "<em>Not set</em>"
+          }`;
+          left.appendChild(badges);
+          left.appendChild(title);
+          left.appendChild(meta);
+
+          const right = document.createElement("div");
+          right.className = "flex items-center gap-2 sm:flex-col sm:items-end";
+          const toggleBtn = document.createElement("button");
+          toggleBtn.className =
+            "w-10 h-10 rounded-full flex items-center justify-center focus-ring";
+          toggleBtn.title = t.completed
+            ? "Mark as pending"
+            : "Mark as complete";
+          toggleBtn.innerHTML = t.completed ? "✔" : "";
+          toggleBtn.style.background = t.completed ? "#16a34a" : "#e5e7eb";
+          toggleBtn.style.color = t.completed ? "white" : "black";
+          toggleBtn.addEventListener("click", () => toggleComplete(t.id));
+          right.appendChild(toggleBtn);
+
+          const dueEdit = document.createElement("input");
+          dueEdit.type = "date";
+          dueEdit.value = t.due || "";
+          dueEdit.className = "p-2 border rounded text-sm text-black";
+          dueEdit.addEventListener("change", () =>
+            updateTask(t.id, { due: dueEdit.value })
+          );
+          right.appendChild(dueEdit);
+
+          const prioSel = document.createElement("select");
+          ["Low", "Medium", "High"].forEach((p) => {
+            const o = document.createElement("option");
+            o.value = p;
+            o.text = p;
+            if (p === t.priority) o.selected = true;
+            prioSel.appendChild(o);
+          });
+          prioSel.className = "p-2 border rounded text-sm text-black";
+          prioSel.addEventListener("change", () =>
+            updateTask(t.id, { priority: prioSel.value })
+          );
+          right.appendChild(prioSel);
+
+          const delBtn = document.createElement("button");
+          delBtn.className = "px-3 py-2 bg-red-600 text-white rounded text-sm";
+          delBtn.textContent = "Delete";
+          delBtn.addEventListener("click", () => deleteTask(t.id));
+          right.appendChild(delBtn);
+
+          li.appendChild(left);
+          li.appendChild(right);
+          taskListEl.appendChild(li);
+        });
+      }
+
+      taskForm.addEventListener("submit", addTask);
+      filterStatus.addEventListener("change", renderTasks);
+      sortDue.addEventListener("change", renderTasks);
+      searchInput.addEventListener("input", renderTasks);
+      resetFilters.addEventListener("click", (e) => {
+        e.preventDefault();
+        filterStatus.value = "All";
+        sortDue.value = "none";
+        searchInput.value = "";
+        renderTasks();
+      });
+      clearStorageBtn.addEventListener("click", () => {
+        if (confirm("Clear all tasks and reset to sample?")) {
+          localStorage.removeItem(STORAGE_KEY);
+          tasks = sampleTasks.slice();
+          saveTasks();
+        }
+      });
+
+      saveTasks();
+    </script>
+  </body>
+</html>
