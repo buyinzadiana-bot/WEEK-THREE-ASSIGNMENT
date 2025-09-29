@@ -47,7 +47,7 @@
     >
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
-          <!-- LOGO LEFT -->
+          <!-- LEFT LOGO -->
                 <svg
         class="w-8 h-8 text-indigo-500"
         viewBox="0 0 24 24"
@@ -241,7 +241,7 @@
       Built for learning • Tailwind • Vanilla JS • LocalStorage
     </footer>
 
-   <!-- TASK LOGIC JS -->
+    <!-- TASK LOGIC JS -->
     <script>
       const STORAGE_KEY = "task_dashboard_v2";
       const taskListEl = document.getElementById("taskList");
@@ -266,8 +266,9 @@
         const d = new Date();
         d.setDate(d.getDate() + days);
         return d.toISOString().slice(0, 10);
+      }
 
-        // Sample tasks
+      // Sample tasks
       const sampleTasks = [
         {
           id: uid(),
@@ -362,9 +363,6 @@
           saveTasks();
         }
       }
-      }
-
-      
 
       function renderTasks() {
         const query = (searchInput.value || "").trim().toLowerCase();
@@ -529,8 +527,6 @@
       });
 
       saveTasks();
-
-
     </script>
   </body>
 </html>
