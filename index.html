@@ -399,6 +399,48 @@
           return;
         }
 
+        taskListEl.innerHTML = "";
+        visible.forEach((t) => {
+          const li = document.createElement("li");
+          li.className =
+            "p-4 bg-gray-800 rounded-lg shadow-sm flex flex-col sm:flex-row sm:items-center gap-3";
+          li.dataset.id = t.id;
+
+          const left = document.createElement("div");
+          left.className = "flex-1 min-w-0";
+          const badges = document.createElement("div");
+          badges.className = "flex flex-wrap gap-2 mb-2 items-center";
+
+          const priBadge = document.createElement("span");
+          priBadge.className =
+            "text-xs px-2 py-0.5 rounded " +
+            (t.priority === "High"
+              ? "bg-red-700 text-red-100"
+              : t.priority === "Medium"
+              ? "bg-yellow-700 text-yellow-100"
+              : "bg-green-700 text-green-100");
+          priBadge.textContent = t.priority;
+          badges.appendChild(priBadge);
+
+          const catBadge = document.createElement("span");
+          catBadge.className =
+            "text-xs px-2 py-0.5 rounded bg-gray-700 text-gray-200";
+          catBadge.textContent = t.category || "General";
+          badges.appendChild(catBadge);
+
+          const title = document.createElement("div");
+          title.className = "text-sm font-medium truncate";
+          if (t.completed) title.classList.add("task-completed");
+          title.contentEditable = true;
+          title.spellcheck = false;
+          title.textContent = t.title;
+          title.addEventListener("blur", () => {
+            const newText = title.textContent.trim();
+            if (!newText) {
+              title.textContent = t.title;
+              return;
+            }
+
 
     </script>
   </body>
