@@ -491,6 +491,44 @@
             if (p === t.priority) o.selected = true;
             prioSel.appendChild(o);
           });
+          prioSel.className = "p-2 border rounded text-sm text-black";
+          prioSel.addEventListener("change", () =>
+            updateTask(t.id, { priority: prioSel.value })
+          );
+          right.appendChild(prioSel);
+
+          const delBtn = document.createElement("button");
+          delBtn.className = "px-3 py-2 bg-red-600 text-white rounded text-sm";
+          delBtn.textContent = "Delete";
+          delBtn.addEventListener("click", () => deleteTask(t.id));
+          right.appendChild(delBtn);
+
+          li.appendChild(left);
+          li.appendChild(right);
+          taskListEl.appendChild(li);
+        });
+      }
+
+      taskForm.addEventListener("submit", addTask);
+      filterStatus.addEventListener("change", renderTasks);
+      sortDue.addEventListener("change", renderTasks);
+      searchInput.addEventListener("input", renderTasks);
+      resetFilters.addEventListener("click", (e) => {
+        e.preventDefault();
+        filterStatus.value = "All";
+        sortDue.value = "none";
+        searchInput.value = "";
+        renderTasks();
+      });
+      clearStorageBtn.addEventListener("click", () => {
+        if (confirm("Clear all tasks and reset to sample?")) {
+          localStorage.removeItem(STORAGE_KEY);
+          tasks = sampleTasks.slice();
+          saveTasks();
+        }
+      });
+
+      saveTasks();
 
 
     </script>
