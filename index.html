@@ -440,6 +440,57 @@
               title.textContent = t.title;
               return;
             }
+            if (newText !== t.title) updateTask(t.id, { title: newText });
+          });
+          title.addEventListener("keydown", (ev) => {
+            if (ev.key === "Enter") {
+              ev.preventDefault();
+              title.blur();
+            }
+          });
+
+          const meta = document.createElement("div");
+          meta.className = "text-xs text-gray-400 mt-1";
+          meta.innerHTML = `Due: ${
+            t.due
+              ? `<time datetime="${t.due}">${t.due}</time>`
+              : "<em>Not set</em>"
+          }`;
+          left.appendChild(badges);
+          left.appendChild(title);
+          left.appendChild(meta);
+
+          const right = document.createElement("div");
+          right.className = "flex items-center gap-2 sm:flex-col sm:items-end";
+          const toggleBtn = document.createElement("button");
+          toggleBtn.className =
+            "w-10 h-10 rounded-full flex items-center justify-center focus-ring";
+          toggleBtn.title = t.completed
+            ? "Mark as pending"
+            : "Mark as complete";
+          toggleBtn.innerHTML = t.completed ? "✔" : "";
+          toggleBtn.style.background = t.completed ? "#16a34a" : "#e5e7eb";
+          toggleBtn.style.color = t.completed ? "white" : "black";
+          toggleBtn.addEventListener("click", () => toggleComplete(t.id));
+          right.appendChild(toggleBtn);
+
+          const dueEdit = document.createElement("input");
+          dueEdit.type = "date";
+          dueEdit.value = t.due || "";
+          dueEdit.className = "p-2 border rounded text-sm text-black";
+          dueEdit.addEventListener("change", () =>
+            updateTask(t.id, { due: dueEdit.value })
+          );
+          right.appendChild(dueEdit);
+
+          const prioSel = document.createElement("select");
+          ["Low", "Medium", "High"].forEach((p) => {
+            const o = document.createElement("option");
+            o.value = p;
+            o.text = p;
+            if (p === t.priority) o.selected = true;
+            prioSel.appendChild(o);
+          });
 
 
     </script>
