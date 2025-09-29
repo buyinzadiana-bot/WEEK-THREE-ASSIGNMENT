@@ -32,3 +32,5 @@ UI / UX Features:
 15. Quick Stats – Display total tasks and completed tasks.
 16. Visual Completion – Completed tasks appear crossed out with reduced opacity.
 17. Accessible Focus Styling – Buttons and inputs have focus rings for accessibility.
+
+![image alt](https://github.com/buyinzadiana-bot/WEEK-THREE-ASSIGNMENT/blob/7035cd3b1394935dcd686fac7a6c34ac61422dcc/Screenshot%202025-09-28%20at%2021.50.54.png)
