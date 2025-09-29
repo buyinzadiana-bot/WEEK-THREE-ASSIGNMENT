@@ -362,6 +362,42 @@
           saveTasks();
         }
       }
+      }
+
+      
+
+      function renderTasks() {
+        const query = (searchInput.value || "").trim().toLowerCase();
+        const status = filterStatus.value;
+        const sortMode = sortDue.value;
+
+        let visible = tasks.filter((t) => {
+          if (status === "Pending" && t.completed) return false;
+          if (status === "Completed" && !t.completed) return false;
+          if (
+            query &&
+            !t.title.toLowerCase().includes(query) &&
+            !(t.category || "").toLowerCase().includes(query)
+          )
+            return false;
+          return true;
+        });
+
+        if (sortMode === "asc") {
+          visible.sort(
+            (a, b) => (a.due || "9999-12-31") > (b.due || "9999-12-31" ? 1 : -1)
+          );
+        } else if (sortMode === "desc") {
+          visible.sort((a, b) => (a.due || "") < (b.due || "" ? 1 : -1));
+        } else visible.sort((a, b) => b.createdAt - a.createdAt);
+
+        statsTotal.textContent = tasks.length;
+        statsDone.textContent = tasks.filter((t) => t.completed).length;
+
+        if (visible.length === 0) {
+          taskListEl.innerHTML = `<li class="p-4 bg-gray-800 rounded text-sm text-gray-400">No tasks found.</li>`;
+          return;
+        }
 
 
     </script>
