@@ -241,7 +241,128 @@
       Built for learning • Tailwind • Vanilla JS • LocalStorage
     </footer>
 
- 
+   <!-- TASK LOGIC JS -->
+    <script>
+      const STORAGE_KEY = "task_dashboard_v2";
+      const taskListEl = document.getElementById("taskList");
+      const taskForm = document.getElementById("taskForm");
+      const taskNameInput = document.getElementById("taskName");
+      const taskDueInput = document.getElementById("taskDue");
+      const taskPriorityInput = document.getElementById("taskPriority");
+      const taskCategoryInput = document.getElementById("taskCategory");
+      const filterStatus = document.getElementById("filterStatus");
+      const sortDue = document.getElementById("sortDue");
+      const searchInput = document.getElementById("searchInput");
+      const resetFilters = document.getElementById("resetFilters");
+      const statsTotal = document.getElementById("statsTotal");
+      const statsDone = document.getElementById("statsDone");
+      const clearStorageBtn = document.getElementById("clearStorageBtn");
+
+      // ID generator
+      function uid() {
+        return "t-" + Math.random().toString(36).slice(2, 9);
+      }
+      function addDaysISO(days) {
+        const d = new Date();
+        d.setDate(d.getDate() + days);
+        return d.toISOString().slice(0, 10);
+
+        // Sample tasks
+      const sampleTasks = [
+        {
+          id: uid(),
+          title: "Design home hero",
+          due: addDaysISO(3),
+          priority: "High",
+          category: "Work",
+          completed: false,
+          createdAt: Date.now() - 86400000,
+        },
+        {
+          id: uid(),
+          title: "Write README",
+          due: addDaysISO(5),
+          priority: "Medium",
+          category: "Work",
+          completed: false,
+          createdAt: Date.now() - 82800000,
+        },
+        {
+          id: uid(),
+          title: "Finish JS module",
+          due: addDaysISO(1),
+          priority: "High",
+          category: "School",
+          completed: false,
+          createdAt: Date.now() - 79200000,
+        },
+        {
+          id: uid(),
+          title: "Buy hosting",
+          due: "",
+          priority: "Low",
+          category: "Personal",
+          completed: false,
+          createdAt: Date.now() - 75600000,
+        },
+        {
+          id: uid(),
+          title: "Refactor code",
+          due: addDaysISO(7),
+          priority: "Medium",
+          category: "Work",
+          completed: true,
+          createdAt: Date.now() - 72000000,
+        },
+      ];
+
+      let tasks =
+        JSON.parse(localStorage.getItem(STORAGE_KEY)) || sampleTasks.slice();
+
+      function saveTasks() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+        renderTasks();
+      }
+      function addTask(e) {
+        e.preventDefault();
+        const title = taskNameInput.value.trim();
+        if (!title) {
+          alert("Task name required");
+          return;
+        }
+        tasks.push({
+          id: uid(),
+          title,
+          due: taskDueInput.value || "",
+          priority: taskPriorityInput.value,
+          category: taskCategoryInput.value,
+          completed: false,
+          createdAt: Date.now(),
+        });
+        taskForm.reset();
+        saveTasks();
+      }
+      function deleteTask(id) {
+        if (confirm("Delete this task?")) {
+          tasks = tasks.filter((t) => t.id !== id);
+          saveTasks();
+        }
+      }
+      function toggleComplete(id) {
+        const t = tasks.find((x) => x.id === id);
+        if (t) {
+          t.completed = !t.completed;
+          saveTasks();
+        }
+      }
+      function updateTask(id, patch) {
+        const t = tasks.find((x) => x.id === id);
+        if (t) {
+          Object.assign(t, patch);
+          saveTasks();
+        }
+      }
+
 
     </script>
   </body>
